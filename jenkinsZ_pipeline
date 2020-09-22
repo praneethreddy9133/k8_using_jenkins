@@ -1,0 +1,19 @@
+node{
+    stage("Git Clone"){
+        
+            git credentialsId: 'GIT_CREDENTIALS', url: 'https://github.com/praneethreddy9133/spring-boot-mongo-docker.git'
+    }
+    stage("maven clean install"){
+        def mavenHome =  tool name: "Maven-3.6.1", type: "maven"
+      def mavenCMD = "${mavenHome}/bin/mvn"
+      sh "${mavenCMD} clean package"
+    }
+    stage('Build Docker Image'){
+        sh 'docker build -t spring-boot-mongo .'
+    }
+    stage("Docker push"){
+        sh "docker login -u praneeth9133 -p Praneeth1@ "
+        sh "docker tag spring-boot-mongo praneeth9133/spring-boot-mongo:new"
+        sh "docker push praneeth9133/spring-boot-mongo:new "
+    }
+}
